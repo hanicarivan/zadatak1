@@ -3,8 +3,8 @@ INSERT INTO store (name, address, zip) VALUES
 ('Grocery Store B', '456 Oak St', '22222');
 
 INSERT INTO "user" (email, year_of_birth, household_size, created) VALUES
-('user1@example.com', 1990, 0, CURRENT_TIMESTAMP),
-('user2@example.com', 1985, 0, CURRENT_TIMESTAMP);
+('user1@example.com', 1960, 0, CURRENT_TIMESTAMP),
+('user2@example.com', 1975, 0, CURRENT_TIMESTAMP);
 
 INSERT INTO receipt (user_id, store_id, purchase_date, created, updated) VALUES
 (1, 1, '2021-12-15', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

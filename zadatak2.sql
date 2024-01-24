@@ -1,14 +1,14 @@
-SELECT receipt.store_id, AVG(receipt.total_amount) AS avg_amount
-FROM (
-    SELECT
-        receipt.store_id,
-        receipt.id,
-        SUM(receipt_line."count" * receipt_line.price) AS total_amount
-	FROM receipt
-    JOIN receipt_line ON receipt.id = receipt_line.receipt_id
-    JOIN "user" ON receipt.user_id = "user".id
-	WHERE EXTRACT(YEAR FROM CURRENT_DATE) - "user".year_of_birth >= 60
-    GROUP BY receipt.store_id, receipt.id
-	) AS receipt
+WITH uvjet_stariji_od AS (
+	SELECT r.store_id, COUNT(DISTINCT "user".id) AS broj_starijih_od_60
+	FROM receipt AS r
+	JOIN "user" ON r.user_id = "user".id AND "user".year_of_birth < EXTRACT(YEAR FROM CURRENT_DATE) - 60
+	GROUP BY r.store_id
+	HAVING COUNT(DISTINCT "user".id) / COUNT(DISTINCT r.user_id) >= 0.2
+)
+
+SELECT receipt.store_id, AVG(receipt_line.price * receipt_line."count") AS avg_amount
+FROM receipt
+JOIN receipt_line ON receipt.id = receipt_line.receipt_id
+JOIN uvjet_stariji_od ON receipt.store_id = uvjet_stariji_od.store_id
 GROUP BY receipt.store_id
-HAVING COUNT(DISTINCT receipt.id) / COUNT(DISTINCT receipt.store_id) >= 0.2;
+ORDER BY receipt.store_id ASC;
